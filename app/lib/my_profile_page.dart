@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:app/common.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
@@ -29,11 +30,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         padding: const EdgeInsets.all(25.0),
         child: Column(
           children: [
-            Column(children: <Widget>[
-              SizedBox(height: 20),
-              Align(alignment: Alignment.centerLeft, child: Text("Location")),
-              Divider(height: 20, thickness: 2, color: Colors.black)
-            ]),
+            Separator(text: "Location"),
             TextFormField(
               readOnly: useLocation,
               obscureText: false,
@@ -53,13 +50,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           // TODO: Get geolocation and display on textbox
                           myCEP = "12345-678";
                         }))),
-            Column(children: <Widget>[
-              SizedBox(height: 20),
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Notifications")),
-              Divider(height: 20, thickness: 2, color: Colors.black)
-            ]),
+            Separator(text: "Notifications"),
             // TODO: Instead of dropdown, maybe checkboxes?
             DropdownButtonFormField<String>(
                 value: currentWarningLevel,

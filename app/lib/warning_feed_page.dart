@@ -1,6 +1,8 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
+import 'package:app/common.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 // ignore: prefer_const_declarations
 final Map<int, Tuple2<String, Color>> warningSeverityMap =
@@ -35,14 +37,16 @@ class Warning extends StatelessWidget {
       width: double.infinity,
       child: Center(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Icon(
-                iconData,
-                color: warningSeverityMap[severity]!.item2,
-                size: 65,
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Icon(
+                  iconData,
+                  color: warningSeverityMap[severity]!.item2,
+                  size: 60,
+                ),
               ),
             ),
             Expanded(
@@ -73,20 +77,57 @@ class Warning extends StatelessWidget {
   }
 }
 
+// We should pass a json containing all warnings
 class WarningFeedPage extends StatelessWidget {
-  const WarningFeedPage({Key? key}) : super(key: key);
+  const WarningFeedPage({
+    Key? key,
+  }) : super(key: key);
+
+  static const List<Widget> feed = <Widget>[
+    Separator(
+      text: "Today",
+      spacing: 0,
+    ),
+    Warning(
+      iconData: WeatherIcons.snowflake_cold,
+      severity: 1,
+      warningText:
+          "Could wave, expect temperatures between 0 and 5 degrees celsius",
+    ),
+    Warning(
+      iconData: WeatherIcons.rain,
+      severity: 2,
+      warningText: "Heavy rainfall ahead, expect 40 to 50mm",
+    ),
+    Separator(
+      text: "Tomorrow",
+      spacing: 0,
+    ),
+    Warning(
+      iconData: WeatherIcons.snowflake_cold,
+      severity: 2,
+      warningText:
+          "Could wave, expect temperatures between 0 and 5 degrees celsius",
+    ),
+    Warning(
+      iconData: WeatherIcons.rain,
+      severity: 0,
+      warningText: "Heavy rainfall ahead, expect 40 to 50mm",
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        body: Padding(
-      padding: EdgeInsets.all(20.0),
-      child: Warning(
-        iconData: Icons.access_time_rounded,
-        severity: 0,
-        warningText:
-            "Acoooordaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      ),
-    ));
+    return ListView.separated(
+        shrinkWrap: true,
+        scrollDirection: Axis.vertical,
+        physics: const BouncingScrollPhysics(),
+        itemCount: 1,
+        separatorBuilder: (context, index) => const SizedBox(height: 10),
+        itemBuilder: (context, index) => Container(
+            padding: const EdgeInsets.all(12),
+            child: ListView(
+                shrinkWrap: true,
+                children: feed.map((item) => ListTile(title: item)).toList())));
   }
 }
