@@ -1,6 +1,6 @@
-import 'package:app/mapPage.dart';
-import 'package:app/myProfilePage.dart';
-import 'package:app/warningFeedPage.dart';
+import 'package:app/map_page.dart';
+import 'package:app/my_profile_page.dart';
+import 'package:app/warning_feed_page.dart';
 
 import 'package:flutter/material.dart';
 
@@ -29,7 +29,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var currentIndex = 1;
   var counter = 0;
-  final List<Widget> screens = [const MapPage(), const WarningFeedPage(), const MyProfilePage()];
+  final List<Widget> screens = [
+    const MapPage(),
+    const WarningFeedPage(),
+    const MyProfilePage()
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
