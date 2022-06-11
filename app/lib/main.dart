@@ -1,6 +1,7 @@
 import 'package:app/pages/map_page.dart';
 import 'package:app/pages/my_profile_page.dart';
 import 'package:app/pages/warning_feed_page.dart';
+import 'package:app/services/location_service.dart';
 import 'package:app/services/notification_service.dart';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ Future<void> main() async {
   await NotificationService().init();
   // await NotificationService()
   //     .show("Notificação teste", "Notificação Body", "Notificação Payload");
+  await LocationService().init();
   runApp(const Main());
 }
 
@@ -42,6 +44,7 @@ class _PageControllerState extends State<PageController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: IndexedStack(children: screens, index: currentIndex),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,

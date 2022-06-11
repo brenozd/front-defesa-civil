@@ -4,8 +4,6 @@ class NotificationService {
   static final NotificationService _notificationService =
       NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
 
   factory NotificationService() {
     return _notificationService;
@@ -13,6 +11,7 @@ class NotificationService {
 
   NotificationService._internal();
 
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   Future<void> selectNotification(String? payload) async {
     //Handle notification tapped logic here
   }
@@ -30,20 +29,18 @@ class NotificationService {
   }
 
   Future<void> show(String title, String body, String payload) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        '1',
-        'test',
-        channelDescription: 'TestChannel',
-        importance: Importance.defaultImportance,
-        priority: Priority.defaultPriority
-    );
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('1', 'test',
+            channelDescription: 'TestChannel',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority);
 
     await flutterLocalNotificationsPlugin.show(
       1,
       title,
       body,
       const NotificationDetails(android: androidPlatformChannelSpecifics),
-      payload:payload,
+      payload: payload,
     );
   }
 }

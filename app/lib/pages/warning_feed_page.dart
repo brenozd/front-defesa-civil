@@ -26,7 +26,8 @@ class Warning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+        child: Container(
       decoration: BoxDecoration(
           border: Border.all(
             color: const Color(0xFFC2CCD6),
@@ -73,7 +74,7 @@ class Warning extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 
