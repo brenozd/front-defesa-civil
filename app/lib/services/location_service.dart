@@ -2,12 +2,15 @@
 
 import 'package:location/location.dart' as loc;
 import 'package:geocoding/geocoding.dart';
+import "package:latlong2/latlong.dart";
 
 class LocationService {
   static final LocationService _service = LocationService._internal();
-  final loc.Location _location = loc.Location();
+  final loc.Location _loc = loc.Location();
+  bool enableBackground = false;
   String? _postalCode;
   String? _countryCode;
+  loc.LocationData? _currentLocation;
 
   Map<String, String> countryCodeRegexMap = {
     'JE': r'JE\d[\dA-Z]?[ ]?\d[ABD-HJLN-UW-Z]{2}',
@@ -176,10 +179,11 @@ class LocationService {
   LocationService._internal();
 
   Future<void> init() async {
-    _location.enableBackgroundMode(enable: true);
-    _location.changeSettings(
+    _loc.enableBackgroundMode(enable: enableBackground);
+    _loc.changeSettings(
         accuracy: loc.LocationAccuracy.high, interval: 60 * 1000);
-    _location.onLocationChanged.listen((data) {
+    _loc.onLocationChanged.listen((data) {
+      _currentLocation = data;
       _service._update(data);
     });
 
@@ -194,27 +198,44 @@ class LocationService {
     return countryCodeRegexMap[_countryCode]!;
   }
 
+  LatLng? getCurrentLocation() {
+    return LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!);
+  }
+
+  // Keep in mind that this function disable background mode
+  bool setCurrentLocation(String postalCode, String countryCode) {
+    enableBackground = false;
+
+    RegExp validatePostalCode = RegExp(countryCodeRegexMap[countryCode]!);
+    if (validatePostalCode.hasMatch(postalCode) == false) {
+      return false;
+    }
+    _countryCode = countryCode;
+    _postalCode = postalCode;
+    return true;
+  }
+
   Future<loc.LocationData?> _getLocation() async {
     bool _serviceEnabled;
     loc.PermissionStatus _permissionGranted;
 
-    _serviceEnabled = await _location.serviceEnabled();
+    _serviceEnabled = await _loc.serviceEnabled();
     if (!_serviceEnabled) {
-      _serviceEnabled = await _location.requestService();
+      _serviceEnabled = await _loc.requestService();
       if (!_serviceEnabled) {
         return null;
       }
     }
 
-    _permissionGranted = await _location.hasPermission();
+    _permissionGranted = await _loc.hasPermission();
     if (_permissionGranted == loc.PermissionStatus.denied) {
-      _permissionGranted = await _location.requestPermission();
+      _permissionGranted = await _loc.requestPermission();
       if (_permissionGranted != loc.PermissionStatus.granted) {
         return null;
       }
     }
-
-    return await _location.getLocation();
+    _currentLocation = await _loc.getLocation();
+    return _currentLocation;
   }
 
   Future<void> _update(loc.LocationData? location) async {

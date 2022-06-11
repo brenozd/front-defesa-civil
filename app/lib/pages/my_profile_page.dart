@@ -15,7 +15,8 @@ class MyProfilePage extends StatefulWidget {
 class _MyProfilePageState extends State<MyProfilePage> {
   final _formKey = GlobalKey<FormState>();
   bool useLocation = true;
-  var myPostalCode = "00000-000";
+  String profilePostalCode = "00000-000";
+  String profileCountryCode = "BR";
 
   var currentWarningLevel = "Low";
   List<String> dropDownItens = ["Low", "Moderate", "High"];
@@ -29,11 +30,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
   @override
   Widget build(BuildContext context) {
     if (useLocation) {
-      myPostalCode = LocationService().getPostalCode();
+      profilePostalCode = LocationService().getPostalCode();
     }
     return Form(
         key: _formKey,
-        child: Scaffold(resizeToAvoidBottomInset: false,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: Center(
               child: Padding(
             padding: const EdgeInsets.all(25.0),
@@ -43,7 +45,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 TextFormField(
                   readOnly: useLocation,
                   obscureText: false,
-                  controller: TextEditingController(text: myPostalCode),
+                  controller: TextEditingController(text: profilePostalCode),
                   decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       helperText: 'Postal Code',
@@ -61,8 +63,43 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     return null;
                   },
                   onFieldSubmitted: (value) {
+                    profilePostalCode = value;
                     _formKey.currentState!.validate();
+                    LocationService().setCurrentLocation(
+                        profilePostalCode, profileCountryCode);
                   },
+                ),
+                Visibility(
+                  child: SizedBox(
+                    height: 15,
+                  ),
+                  visible: !useLocation,
+                ),
+                Visibility(
+                  child: DropdownButtonFormField<String>(
+                      value: profileCountryCode,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Country Code"),
+                      icon: const Icon(Icons.arrow_drop_down_rounded),
+                      items: LocationService()
+                          .countryCodeRegexMap
+                          .keys
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          profileCountryCode = value!;
+                        });
+                        _formKey.currentState!.validate();
+                        LocationService().setCurrentLocation(
+                            profilePostalCode, profileCountryCode);
+                      }),
+                  visible: !useLocation,
                 ),
                 Align(
                     alignment: Alignment.center,
@@ -71,7 +108,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         value: useLocation,
                         onChanged: (bool? value) => setState(() {
                               useLocation = value!;
-                              myPostalCode = LocationService().getPostalCode();
+                              LocationService().enableBackground = value;
+                              profilePostalCode =
+                                  LocationService().getPostalCode();
                             }))),
                 Separator(text: "Notifications"),
                 // TODO: Instead of dropdown, maybe checkboxes?
