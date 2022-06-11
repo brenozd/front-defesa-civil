@@ -34,7 +34,7 @@ class Warning extends StatelessWidget {
           ),
           color: const Color(0xFFC2CCD6),
           borderRadius: const BorderRadius.all(Radius.circular(20))),
-      height: 100,
+      height: 120,
       width: double.infinity,
       child: Center(
         child: Row(
@@ -93,7 +93,7 @@ class WarningFeedPage extends StatelessWidget {
       iconData: WeatherIcons.snowflake_cold,
       severity: 1,
       warningText:
-          "Could wave, expect temperatures between 0 and 5 degrees celsius",
+          "Cold wave, expect temperatures between 0 and 5 degrees celsius",
     ),
     Warning(
       iconData: WeatherIcons.rain,
@@ -108,7 +108,7 @@ class WarningFeedPage extends StatelessWidget {
       iconData: WeatherIcons.snowflake_cold,
       severity: 2,
       warningText:
-          "Could wave, expect temperatures between 0 and 5 degrees celsius",
+          "Cold wave, expect temperatures between 0 and 5 degrees celsius",
     ),
     Warning(
       iconData: WeatherIcons.rain,
