@@ -1,10 +1,15 @@
-import 'package:app/map_page.dart';
-import 'package:app/my_profile_page.dart';
-import 'package:app/warning_feed_page.dart';
+import 'package:app/pages/map_page.dart';
+import 'package:app/pages/my_profile_page.dart';
+import 'package:app/pages/warning_feed_page.dart';
+import 'package:app/services/notification_service.dart';
 
 import 'package:flutter/material.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().init();
+  // await NotificationService()
+  //     .show("Notificação teste", "Notificação Body", "Notificação Payload");
   runApp(const Main());
 }
 
@@ -14,19 +19,19 @@ class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: HomePage(),
+      home: PageController(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class PageController extends StatefulWidget {
+  const PageController({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<PageController> createState() => _PageControllerState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _PageControllerState extends State<PageController> {
   var currentIndex = 1;
   var counter = 0;
   final List<Widget> screens = [
