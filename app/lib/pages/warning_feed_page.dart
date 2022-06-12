@@ -7,7 +7,7 @@ import 'package:weather_icons/weather_icons.dart';
 // ignore: prefer_const_declarations
 final Map<int, Tuple2<String, Color>> warningSeverityMap =
     const <int, Tuple2<String, Color>>{
-  0: Tuple2("Low", Color.fromARGB(255, 255, 247, 20)),
+  0: Tuple2("Low", Color.fromARGB(255, 230, 224, 66)),
   1: Tuple2("Moderate", Color.fromARGB(255, 255, 196, 20)),
   2: Tuple2("High", Color.fromARGB(255, 255, 20, 20)),
 };
@@ -26,6 +26,40 @@ class Warning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var warningIcon = Align(
+      alignment: Alignment.topRight,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Icon(
+          iconData,
+          color: warningSeverityMap[severity]!.item2,
+          size: 60,
+        ),
+      ),
+    );
+
+    var warningBody = Expanded(
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              warningText,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+              ),
+            ),
+            Text(
+              warningSeverityMap[severity]!.item1,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            )
+          ]),
+    );
+
     return SingleChildScrollView(
         child: Container(
       decoration: BoxDecoration(
@@ -39,38 +73,8 @@ class Warning extends StatelessWidget {
       child: Center(
         child: Row(
           children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 12),
-                child: Icon(
-                  iconData,
-                  color: warningSeverityMap[severity]!.item2,
-                  size: 60,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      warningText,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    Text(
-                      warningSeverityMap[severity]!.item1,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                    )
-                  ]),
-            )
+            warningIcon,
+            warningBody,
           ],
         ),
       ),
@@ -102,7 +106,7 @@ class WarningFeedPage extends StatelessWidget {
     ),
     Separator(
       text: "Tomorrow",
-      spacing: 0,
+      spacing: 5,
     ),
     Warning(
       iconData: WeatherIcons.snowflake_cold,
