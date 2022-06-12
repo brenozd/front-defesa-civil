@@ -11,7 +11,7 @@ class MapPage extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         body: FlutterMap(
           options: MapOptions(
-            center: LocationService().getCurrentLocation(),
+            center: LocationService().getCurrentCoordinates(),
             zoom: 13.0,
           ),
           layers: [
@@ -27,7 +27,7 @@ class MapPage extends StatelessWidget {
                 Marker(
                   width: 130.0,
                   height: 130.0,
-                  point: LocationService().getCurrentLocation()!,
+                  point: LocationService().getCurrentCoordinates()!,
                   builder: (ctx) =>
                       const Icon(Icons.location_pin, color: Colors.cyan),
                 ),

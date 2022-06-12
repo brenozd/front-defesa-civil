@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:app/common.dart';
 import 'package:app/services/location_service.dart';
-import 'package:location/location.dart';
+import 'package:geocoding/geocoding.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
@@ -14,8 +14,6 @@ class MyProfilePage extends StatefulWidget {
 class _MyProfilePageState extends State<MyProfilePage> {
   final _formKey = GlobalKey<FormState>();
   bool useLocation = true;
-  String profilePostalCode = "00000-000";
-  String profileCountryCode = "BR";
 
   var currentWarningLevel = "Low";
   List<String> dropDownItens = ["Low", "Moderate", "High"];
@@ -28,68 +26,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (useLocation) {
-      profilePostalCode = LocationService().getPostalCode();
-    }
-
-    var postalCodeFormField = TextFormField(
-      readOnly: useLocation,
-      obscureText: false,
-      controller: TextEditingController(text: profilePostalCode),
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          helperText: 'Postal Code',
-          enabled: true),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return "Postal Code cannot be empty";
-        }
-        if (!LocationService()
-            .setCurrentLocation(profilePostalCode, profileCountryCode)) {
-          return "Invalid postal code format for you region";
-        }
-        return null;
-      },
-      onFieldSubmitted: (value) {
-        setState(() {
-          profilePostalCode = value;
-        });
-        _formKey.currentState!.validate();
-      },
-    );
-
-    var countryCodeDropDown = Visibility(
-        visible: !useLocation,
-        child: DropdownButtonFormField<String>(
-            value: profileCountryCode,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(), labelText: "Country Code"),
-            icon: const Icon(Icons.arrow_drop_down_rounded),
-            items: LocationService()
-                .getCountryCodeRegexMap()
-                .keys
-                .map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-            onChanged: (String? value) {
-              setState(() {
-                profileCountryCode = value!;
-              });
-              _formKey.currentState!.validate();
-            }));
-
-    var useLocationCheckBox = Align(
-        alignment: Alignment.center,
-        child: CheckboxListTile(
-            title: const Text("Use location"),
-            value: useLocation,
-            onChanged: (bool? value) => setState(() {
-                  useLocation = value!;
-                  LocationService().enableBackground = value;
-                  LocationService().update().then((success) =>
-                      profilePostalCode = LocationService().getPostalCode());
-                })));
-
     var warningLevelDropDown = DropdownButtonFormField<String>(
         value: currentWarningLevel,
         decoration: InputDecoration(
@@ -128,11 +64,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
             padding: const EdgeInsets.all(25.0),
             child: Column(
               children: [
-                Separator(text: "Location"),
-                postalCodeFormField,
-                Visibility(child: SizedBox(height: 15), visible: !useLocation),
-                countryCodeDropDown,
-                useLocationCheckBox,
                 Separator(text: "Notifications"),
                 warningLevelDropDown,
                 SizedBox(height: 15),
