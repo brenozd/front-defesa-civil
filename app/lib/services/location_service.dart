@@ -3,10 +3,12 @@ import 'package:location/location.dart' as loc;
 import 'package:geocoding/geocoding.dart';
 import "package:latlong2/latlong.dart";
 
+import 'logger_service.dart';
+
 class LocationService {
   static final LocationService _service = LocationService._internal();
   final loc.Location _loc = loc.Location();
-  bool enableBackground = false;
+  bool enableBackground = true;
 
   Placemark? _currentLocation;
   LatLng? _currentCoordinates;
@@ -26,7 +28,11 @@ class LocationService {
       _update(_currentCoordinates);
     });
 
-    await _service._update(await _service._getLocation());
+    bool hasService = await _service._update(await _service._getLocation());
+    if (!hasService) {
+      log.severe("Cannot get current location, using last known location");
+      // TODO: get last location from API
+    }
   }
 
   Placemark? getCurrentLocation() {
@@ -49,6 +55,7 @@ class LocationService {
     if (!_serviceEnabled) {
       _serviceEnabled = await _loc.requestService();
       if (!_serviceEnabled) {
+        log.warning("Could not enable location service");
         return null;
       }
     }
@@ -57,6 +64,7 @@ class LocationService {
     if (_permissionGranted == loc.PermissionStatus.denied) {
       _permissionGranted = await _loc.requestPermission();
       if (_permissionGranted != loc.PermissionStatus.granted) {
+        log.warning("Could not get permission to use location service");
         return null;
       }
     }
@@ -67,6 +75,7 @@ class LocationService {
 
   Future<bool> _update(LatLng? location) async {
     if (location == null) {
+      log.warning("Could not update location: longitute and latitude not set");
       return false;
     }
     List<Placemark> placemark =
@@ -75,6 +84,7 @@ class LocationService {
       _currentLocation = placemark.elementAt(0);
       return true;
     }
+    log.warning("No location found for current latitude and longitude");
     return false;
   }
 }

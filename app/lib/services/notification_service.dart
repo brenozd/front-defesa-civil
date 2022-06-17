@@ -1,9 +1,9 @@
+import 'package:app/common.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
   static final NotificationService _notificationService =
       NotificationService._internal();
-
 
   factory NotificationService() {
     return _notificationService;
@@ -11,7 +11,8 @@ class NotificationService {
 
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   Future<void> selectNotification(String? payload) async {
     //Handle notification tapped logic here
   }
@@ -28,7 +29,7 @@ class NotificationService {
         onSelectNotification: selectNotification);
   }
 
-  Future<void> show(String title, String body, String payload) async {
+  Future<void> show(Warning warn) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails('1', 'test',
             channelDescription: 'TestChannel',
@@ -37,10 +38,10 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.show(
       1,
-      title,
-      body,
+      warn.title,
+      warn.body,
       const NotificationDetails(android: androidPlatformChannelSpecifics),
-      payload: payload,
+      payload: warn.payload,
     );
   }
 }

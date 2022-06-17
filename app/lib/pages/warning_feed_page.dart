@@ -12,8 +12,8 @@ final Map<int, Tuple2<String, Color>> warningSeverityMap =
   2: Tuple2("High", Color.fromARGB(255, 255, 20, 20)),
 };
 
-class Warning extends StatelessWidget {
-  const Warning({
+class WarningWidget extends StatelessWidget {
+  const WarningWidget({
     Key? key,
     this.iconData = Icons.abc,
     this.severity = 0,
@@ -93,13 +93,13 @@ class WarningFeedPage extends StatelessWidget {
       text: "Today",
       spacing: 0,
     ),
-    Warning(
+    WarningWidget(
       iconData: WeatherIcons.snowflake_cold,
       severity: 1,
       warningText:
           "Cold wave, expect temperatures between 0 and 5 degrees celsius",
     ),
-    Warning(
+    WarningWidget(
       iconData: WeatherIcons.rain,
       severity: 2,
       warningText: "Heavy rainfall ahead, expect 40 to 50mm",
@@ -108,13 +108,13 @@ class WarningFeedPage extends StatelessWidget {
       text: "Tomorrow",
       spacing: 5,
     ),
-    Warning(
+    WarningWidget(
       iconData: WeatherIcons.snowflake_cold,
       severity: 2,
       warningText:
           "Cold wave, expect temperatures between 0 and 5 degrees celsius",
     ),
-    Warning(
+    WarningWidget(
       iconData: WeatherIcons.rain,
       severity: 0,
       warningText: "Heavy rainfall ahead, expect 40 to 50mm",

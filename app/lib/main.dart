@@ -2,16 +2,19 @@ import 'package:app/pages/map_page.dart';
 import 'package:app/pages/my_profile_page.dart';
 import 'package:app/pages/warning_feed_page.dart';
 import 'package:app/services/location_service.dart';
+import 'package:app/services/logger_service.dart';
 import 'package:app/services/notification_service.dart';
-
+import 'package:app/services/mqtt_service.dart';
+import 'package:logging/logging.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService().init();
-  // await NotificationService()
-  //     .show("Notificação teste", "Notificação Body", "Notificação Payload");
+  await LoggingService().init(Level.INFO);
   await LocationService().init();
+  await NotificationService().init();
+  await MQTTClient().init();
+  MQTTClient().listen();
   runApp(const Main());
 }
 
