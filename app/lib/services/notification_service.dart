@@ -41,7 +41,6 @@ class NotificationService {
       warn.title,
       warn.body,
       const NotificationDetails(android: androidPlatformChannelSpecifics),
-      payload: warn.payload,
     );
   }
 }

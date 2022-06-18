@@ -51,7 +51,12 @@ class MQTTClient {
 
     try {
       final parsedMessage = jsonDecode(payload);
-      List<String> requiredFields = ['severity', 'title', 'body', 'payload'];
+      List<String> requiredFields = [
+        'severity',
+        'title',
+        'body',
+        'type',
+      ];
       for (String field in requiredFields) {
         if (!parsedMessage.containsKey(field)) {
           log.warning('Receied MQTT message doesn\'t have field [$field]');
@@ -63,7 +68,7 @@ class MQTTClient {
       n.severity = parsedMessage['severity'];
       n.title = parsedMessage['title'];
       n.body = parsedMessage['body'];
-      n.payload = parsedMessage['payload'];
+      n.type = parsedMessage['type'];
     } on Exception catch (exception) {
       log.severe(
           "Unknown exception while parsing json: " + exception.toString());

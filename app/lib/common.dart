@@ -1,7 +1,11 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:tuple/tuple.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 class Separator extends StatelessWidget {
   const Separator({Key? key, this.text = "", this.spacing = 20.0})
@@ -42,7 +46,22 @@ class API {
 
 class Warning {
   int? severity;
+  int? type;
+  int? feedbacks;
   String? title;
   String? body;
-  String? payload;
+  LatLng? location;
+  Float? radius;
 }
+
+const Map<int, Tuple2<String, Color>> warningSeverityMap =
+    <int, Tuple2<String, Color>>{
+  0: Tuple2("Low", Color.fromARGB(255, 230, 224, 66)),
+  1: Tuple2("Moderate", Color.fromARGB(255, 255, 196, 20)),
+  2: Tuple2("High", Color.fromARGB(255, 255, 20, 20)),
+};
+
+const Map<int, IconData> warningIconMap = <int, IconData>{
+  0: WeatherIcons.snowflake_cold,
+  1: WeatherIcons.rain
+};

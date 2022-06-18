@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:app/common.dart';
-import 'package:app/services/location_service.dart';
-import 'package:geocoding/geocoding.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);

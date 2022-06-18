@@ -1,16 +1,9 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:tuple/tuple.dart';
 import 'package:app/common.dart';
 import 'package:weather_icons/weather_icons.dart';
 
 // ignore: prefer_const_declarations
-final Map<int, Tuple2<String, Color>> warningSeverityMap =
-    const <int, Tuple2<String, Color>>{
-  0: Tuple2("Low", Color.fromARGB(255, 230, 224, 66)),
-  1: Tuple2("Moderate", Color.fromARGB(255, 255, 196, 20)),
-  2: Tuple2("High", Color.fromARGB(255, 255, 20, 20)),
-};
 
 class WarningWidget extends StatelessWidget {
   const WarningWidget({
@@ -19,6 +12,12 @@ class WarningWidget extends StatelessWidget {
     this.severity = 0,
     this.warningText = "My Warning",
   }) : super(key: key);
+
+  WarningWidget.fromWarning(Warning w, {Key? key})
+      : iconData = warningIconMap[w.type]!,
+        severity = w.severity!,
+        warningText = w.body!,
+        super(key: key);
 
   final IconData iconData;
   final int severity;

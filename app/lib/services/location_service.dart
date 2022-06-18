@@ -27,12 +27,7 @@ class LocationService {
       _currentCoordinates = LatLng(_data.latitude!, _data.longitude!);
       _update(_currentCoordinates);
     });
-
-    bool hasService = await _service._update(await _service._getLocation());
-    if (!hasService) {
-      log.severe("Cannot get current location, using last known location");
-      // TODO: get last location from API
-    }
+    update();
   }
 
   Placemark? getCurrentLocation() {
@@ -44,7 +39,13 @@ class LocationService {
   }
 
   Future<bool> update() async {
-    return _update(await _getLocation());
+    bool hasService = await _update(await _getLocation());
+    if (!hasService) {
+      // TODO: Get last location from api
+      log.severe("Cannot get current location, using last known location");
+    }
+    // TODO: send  current location to api
+    return hasService;
   }
 
   Future<LatLng?> _getLocation() async {
