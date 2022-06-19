@@ -63,7 +63,6 @@ class MQTTClient {
           return null;
         }
       }
-      log.info("Severity: " + parsedMessage['severity'].toString());
 
       n.severity = parsedMessage['severity'];
       n.title = parsedMessage['title'];

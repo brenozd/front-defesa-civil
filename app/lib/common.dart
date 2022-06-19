@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:tuple/tuple.dart';
 import 'package:weather_icons/weather_icons.dart';
+import 'package:app/services/logger_service.dart';
 
 class Separator extends StatelessWidget {
   const Separator({Key? key, this.text = "", this.spacing = 20.0})
@@ -24,7 +25,7 @@ class Separator extends StatelessWidget {
 }
 
 class API {
-  final String apiServer = "http://bzd.duckdns.org/";
+  final String apiServer = "http://bzd.duckdns.org:5000/";
   // TODO: username should be passed when login
   final String username = "brenozd";
   String region = "Itajuba";
@@ -41,6 +42,25 @@ class API {
       return resp.body;
     }
     return null;
+  }
+
+  Future<bool> login(String username, String password) async {
+    log.info(username + " | " + password);
+    if (username.isEmpty || password.isEmpty) {
+      return false;
+    }
+    Response resp = await post(
+      Uri.parse(apiServer + 'api/usuario/auth'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{"login": username, "senha": password}),
+    );
+    log.info(resp.statusCode);
+    if (resp.statusCode == 200) {
+      return true;
+    }
+    return false;
   }
 }
 
