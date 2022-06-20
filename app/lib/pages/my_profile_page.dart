@@ -1,6 +1,11 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:app/common.dart';
+import 'package:tuple/tuple.dart';
+
+final profileKey = GlobalKey<FormState>();
+String currentSeverity = "Low";
+List<String> dropDownItens = ["Low", "Moderate", "High"];
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
@@ -10,22 +15,15 @@ class MyProfilePage extends StatefulWidget {
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
-  final _formKey = GlobalKey<FormState>();
   bool useLocation = true;
 
-  var currentWarningLevel = "Low";
-  List<String> dropDownItens = ["Low", "Moderate", "High"];
-  Map<String, bool> warningItens = {
-    "Rain": true,
-    "Flood": true,
-    "Lightning Storm": true,
-    "Landslide" "Wind storm": true,
-  };
+  Map<int, bool> warningItens =
+      warningTypeMap.map((key, value) => MapEntry(key, true));
 
   @override
   Widget build(BuildContext context) {
     var warningLevelDropDown = DropdownButtonFormField<String>(
-        value: currentWarningLevel,
+        value: currentSeverity,
         decoration: InputDecoration(
             border: OutlineInputBorder(), labelText: "Warning Level"),
         icon: const Icon(Icons.arrow_drop_down_rounded),
@@ -36,13 +34,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
           );
         }).toList(),
         onChanged: (String? value) => setState(() {
-              currentWarningLevel = value!;
+              currentSeverity = value!;
             }));
 
     var warningTypes = Column(
-      children: warningItens.keys.map((String key) {
+      children: warningItens.keys.map((int key) {
         return CheckboxListTile(
-          title: Text(key),
+          title: Text(warningTypeMap
+              .getOrElse(key, Tuple2("Unknown", Icons.question_mark))
+              .item1),
           value: warningItens[key],
           onChanged: (bool? value) {
             setState(() {
@@ -54,7 +54,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
     );
 
     return Form(
-        key: _formKey,
+        key: profileKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Center(

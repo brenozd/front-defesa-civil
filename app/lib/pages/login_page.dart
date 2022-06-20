@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:validators/validators.dart';
 import 'package:app/pages/page_controller.dart' as pg;
 
 import '../common.dart';
@@ -14,8 +13,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _username = TextEditingController();
-  TextEditingController _password = TextEditingController();
+  final TextEditingController _username = TextEditingController();
+  final TextEditingController _password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     var usernameTextField = Padding(

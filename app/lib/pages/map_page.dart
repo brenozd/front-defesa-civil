@@ -2,6 +2,7 @@ import 'package:app/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:app/common.dart';
+import 'package:tuple/tuple.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -11,8 +12,12 @@ class MapPage extends StatelessWidget {
       width: 130.0,
       height: 130.0,
       point: warn.location!,
-      builder: (ctx) => Icon(warningIconMap[warn.type]!,
-          color: warningSeverityMap[warn.severity]!.item2),
+      builder: (ctx) => Icon(
+          warningTypeMap.getOrElse(warn.type!, const Tuple2("Unknown", Icons.question_mark)).item2,
+          color: warningSeverityMap
+              .getOrElse(warn.severity!,
+                  const Tuple2('Unknown', Color.fromARGB(255, 161, 20, 255)))
+              .item2),
     );
   }
 

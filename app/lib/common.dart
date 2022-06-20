@@ -8,6 +8,16 @@ import 'package:tuple/tuple.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:app/services/logger_service.dart';
 
+extension DefaultMap<K, V> on Map<K, V> {
+  V getOrElse(K key, V defaultValue) {
+    if (containsKey(key)) {
+      return this[key]!;
+    } else {
+      return defaultValue;
+    }
+  }
+}
+
 class Separator extends StatelessWidget {
   const Separator({Key? key, this.text = "", this.spacing = 20.0})
       : super(key: key);
@@ -26,11 +36,12 @@ class Separator extends StatelessWidget {
 
 class API {
   final String apiServer = "http://bzd.duckdns.org:5000/";
-  // TODO: username should be passed when login
-  final String username = "brenozd";
+  String username = "brenozd";
   String region = "Itajuba";
 
-  Future<String?> getWarnings() async {
+  // TODO: Apply warning filter by lat and lon
+  Future<List<Warning>> getWarnings() async {
+    List<Warning> warns = <Warning>[];
     Response resp = await post(
       Uri.parse(apiServer + 'api/aviso/list'),
       headers: <String, String>{
@@ -39,13 +50,18 @@ class API {
       body: jsonEncode(<String, String>{}),
     );
     if (resp.statusCode == 200) {
-      return resp.body;
+      var respJson = jsonDecode(resp.body)['resultado'];
+      if (respJson.length <= 0) {
+        return warns;
+      }
+      for (Map<String, dynamic> obj in respJson) {
+        warns.add(Warning.fromJson(obj));
+      }
     }
-    return null;
+    return warns;
   }
 
   Future<bool> login(String username, String password) async {
-    log.info(username + " | " + password);
     if (username.isEmpty || password.isEmpty) {
       return false;
     }
@@ -56,10 +72,13 @@ class API {
       },
       body: jsonEncode(<String, String>{"login": username, "senha": password}),
     );
-    log.info(resp.statusCode);
+
     if (resp.statusCode == 200) {
+      this.username = username;
       return true;
     }
+    log.info(
+        "Unable to login, response code was " + resp.statusCode.toString());
     return false;
   }
 }
@@ -72,6 +91,14 @@ class Warning {
   String? body;
   LatLng? location;
   Float? radius;
+  Warning();
+  Warning.fromJson(Map<String, dynamic> parsedJson) {
+    severity = parsedJson['risco'];
+    type = parsedJson['tipo'];
+    feedbacks = parsedJson['nFeedBacks'];
+    body = parsedJson['descricao'];
+    title = 'Generic';
+  }
 }
 
 const Map<int, Tuple2<String, Color>> warningSeverityMap =
@@ -81,7 +108,10 @@ const Map<int, Tuple2<String, Color>> warningSeverityMap =
   2: Tuple2("High", Color.fromARGB(255, 255, 20, 20)),
 };
 
-const Map<int, IconData> warningIconMap = <int, IconData>{
-  0: WeatherIcons.snowflake_cold,
-  1: WeatherIcons.rain
+const Map<int, Tuple2<String, IconData>> warningTypeMap = <int, Tuple2<String, IconData>>{
+  0: Tuple2("Rain", WeatherIcons.rain),
+  1: Tuple2("Snow", WeatherIcons.snowflake_cold),
+  2: Tuple2("Flood", WeatherIcons.flood),
+  3: Tuple2("Lightning Storm", WeatherIcons.lightning),
+  4: Tuple2("Landslide", WeatherIcons.strong_wind)
 };
