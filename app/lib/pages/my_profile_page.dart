@@ -7,18 +7,17 @@ final profileKey = GlobalKey<FormState>();
 String currentSeverity = "Low";
 List<String> dropDownItens = ["Low", "Moderate", "High"];
 
+Map<int, bool> warningItens = warningTypeMap.map((key, value) => MapEntry(key, true));
+
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
-
+  
   @override
   State<MyProfilePage> createState() => _MyProfilePageState();
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
   bool useLocation = true;
-
-  Map<int, bool> warningItens =
-      warningTypeMap.map((key, value) => MapEntry(key, true));
 
   @override
   Widget build(BuildContext context) {

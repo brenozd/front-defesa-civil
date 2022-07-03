@@ -106,6 +106,16 @@ class _WarningFeedPageState extends State<WarningFeedPage> {
   List<Widget> _warnings = <Widget>[];
   late Future<void> _initialWidgetsData;
 
+  var noWarningsWidget = SingleChildScrollView(
+      child: Center(
+        child: Row(
+          children: [
+            const Text("No warnings for your current region", textAlign: TextAlign.center)
+          ],
+        ),
+      ),
+    );
+
   Future<List<Widget>> _getWidgets() async {
     List<Widget> ret = <Widget>[];
     List<Warning> warns = <Warning>[];
@@ -113,8 +123,8 @@ class _WarningFeedPageState extends State<WarningFeedPage> {
     API().getWarnings().then((value) => warns = value).whenComplete(() {
       for (Warning warn in warns) {
         try {
-          // TODO: Filter not working
-          if (warn.severity! >= dropDownItens.indexOf(currentSeverity)) {
+          if (warn.severity! >= dropDownItens.indexOf(currentSeverity) &&
+              warningItens.getOrElse(warn.type!, false) == true) {
             ret.add(WarningWidget.fromWarning(warn));
           }
         } catch (exception) {
@@ -125,10 +135,20 @@ class _WarningFeedPageState extends State<WarningFeedPage> {
     });
     await Future.delayed(const Duration(seconds: 1));
     log.info("Updated warning list");
+
+    if (ret.isEmpty) {
+      ret.add(noWarningsWidget);
+    }
+
     return ret;
   }
 
   Future<void> _initWidgets() async {
+    final widgets = await _getWidgets();
+    _warnings = widgets;
+  }
+
+  Future<void> updateWidgets() async {
     final widgets = await _getWidgets();
     _warnings = widgets;
   }
@@ -157,6 +177,7 @@ class _WarningFeedPageState extends State<WarningFeedPage> {
               {
                 return RefreshIndicator(
                     key: _refreshIndicatorKey,
+                    displacement: 80,
                     onRefresh: () async {
                       final widgets = await _getWidgets();
                       setState(() {
@@ -166,7 +187,8 @@ class _WarningFeedPageState extends State<WarningFeedPage> {
                     child: ListView.separated(
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
-                        physics: const BouncingScrollPhysics(),
+                        reverse: false,
+                        physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: _warnings.length,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 12),
