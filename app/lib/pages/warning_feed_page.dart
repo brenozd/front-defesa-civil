@@ -106,15 +106,11 @@ class _WarningFeedPageState extends State<WarningFeedPage> {
   List<Widget> _warnings = <Widget>[];
   late Future<void> _initialWidgetsData;
 
-  var noWarningsWidget = SingleChildScrollView(
+  var noWarningsWidget = const Expanded(
       child: Center(
-        child: Row(
-          children: [
-            const Text("No warnings for your current region", textAlign: TextAlign.center)
-          ],
-        ),
-      ),
-    );
+          child: SingleChildScrollView(
+              child: Text("No warnings for your current region",
+                  textAlign: TextAlign.center))));
 
   Future<List<Widget>> _getWidgets() async {
     List<Widget> ret = <Widget>[];
@@ -185,7 +181,7 @@ class _WarningFeedPageState extends State<WarningFeedPage> {
                       });
                     },
                     child: ListView.separated(
-                        shrinkWrap: true,
+                        shrinkWrap: false,
                         scrollDirection: Axis.vertical,
                         reverse: false,
                         physics: const AlwaysScrollableScrollPhysics(),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:app/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
@@ -38,8 +39,8 @@ class API {
   final String apiServer = "http://bzd.duckdns.org:5000/";
   String username = "brenozd";
   String region = "Itajuba";
+  LatLng regionOffset = LatLng(0.15, 0.15);
 
-  // TODO: Apply warning filter by lat and lon
   Future<List<Warning>> getWarnings() async {
     List<Warning> warns = <Warning>[];
     Response resp = await post(
@@ -47,7 +48,16 @@ class API {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{}),
+      body: jsonEncode(<String, double?>{
+        "lat_min": (LocationService().getCurrentCoordinates()!.latitude -
+                regionOffset.latitude),
+        "lat_max": (LocationService().getCurrentCoordinates()!.latitude +
+                regionOffset.latitude),
+        "lon_min": (LocationService().getCurrentCoordinates()!.longitude -
+                regionOffset.longitude),
+        "lon_max": (LocationService().getCurrentCoordinates()!.longitude +
+                regionOffset.longitude),
+      }),
     );
     if (resp.statusCode == 200) {
       var respJson = jsonDecode(resp.body)['resultado'];
@@ -108,7 +118,8 @@ const Map<int, Tuple2<String, Color>> warningSeverityMap =
   2: Tuple2("High", Color.fromARGB(255, 255, 20, 20)),
 };
 
-const Map<int, Tuple2<String, IconData>> warningTypeMap = <int, Tuple2<String, IconData>>{
+const Map<int, Tuple2<String, IconData>> warningTypeMap =
+    <int, Tuple2<String, IconData>>{
   0: Tuple2("Rain", WeatherIcons.rain),
   1: Tuple2("Snow", WeatherIcons.snowflake_cold),
   2: Tuple2("Flood", WeatherIcons.flood),
