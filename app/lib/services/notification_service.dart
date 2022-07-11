@@ -2,6 +2,8 @@ import 'package:app/common.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
+  int notificationCounter = 0;
+
   static final NotificationService _notificationService =
       NotificationService._internal();
 
@@ -31,13 +33,13 @@ class NotificationService {
 
   Future<void> show(Warning warn) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('1', 'test',
-            channelDescription: 'TestChannel',
+        AndroidNotificationDetails('1', 'Warnings',
+            channelDescription: 'Warning Channel',
             importance: Importance.defaultImportance,
             priority: Priority.defaultPriority);
 
     await flutterLocalNotificationsPlugin.show(
-      1,
+      notificationCounter++,
       warn.title,
       warn.body,
       const NotificationDetails(android: androidPlatformChannelSpecifics),
